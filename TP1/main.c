@@ -29,9 +29,7 @@ int main(){
         printf("ERROR_ENTERO\n");
     }
 
-    else{
-        printf("ES OTRA COSA\n");
-    }
+    
 
     return 0;
 }

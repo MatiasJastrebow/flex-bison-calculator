@@ -53,7 +53,7 @@ int tipoC (char c){
 enum token scanner(void){
     enum token tipo_estado;
 
-    while(estado < 5){
+    while(estado != 5){
         c = getchar();
         colum = tipoC(c);
         ult_estado = estado;
