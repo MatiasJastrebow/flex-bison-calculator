@@ -18,6 +18,8 @@ int TT [8][7] = {
                     {99, 99, 99, 99, 99, 99, 99}
                 };
 
+
+
 int tipoC (char c){
     int tipo;
     if (isalnum(c)) {
@@ -31,7 +33,7 @@ int tipoC (char c){
         if (isalpha(c)) {
             if (c == 'x' || c == 'X') {
                 tipo = 1;
-            } else if (c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F') {
+            } else if ((c >= 'a' && c <= 'f' )|| (c >= 'A' && c <= 'F')) {
                 tipo = 2;
             } else {
                 tipo = 0;
@@ -46,11 +48,52 @@ int tipoC (char c){
     return tipo;
 }
 
-scanner(void){
+
+
+enum token scanner(void){
+    enum token tipo_estado;
+
     while(estado < 5){
         c = getchar();
         colum = tipoC(c);
         ult_estado = estado;
         estado = TT[estado][colum];
     }
+    
+    //enum token {IDENTIFICADOR, ENTERO, HEXA, FDT, ERROR_GEN, ERROR_ENTERO};
+    
+    switch (ult_estado){
+    
+    case 0:
+        tipo_estado = IDENTIFICADOR; // ERROR (NO ACEPTOR)
+        break;
+
+    case 1:
+        tipo_estado = IDENTIFICADOR;
+        break;
+    case 2:
+        tipo_estado = ERROR_GEN;  // ERROR (NO ACEPTOR)
+        break;
+    case 3:
+        tipo_estado = ENTERO;
+        break;
+    case 4:
+        tipo_estado = HEXA;
+        break;
+    case 5:
+        tipo_estado = ERROR_GEN;  // ERR0R (NO INDICA EL TIPO DE DATO)
+        break;
+    case 6:
+        tipo_estado = ERROR_GEN;
+        break;
+
+    case 7:
+        tipo_estado = ERROR_ENTERO;
+        break;
+
+    default:
+        break;
+    }
+        
+    return tipo_estado;
 }

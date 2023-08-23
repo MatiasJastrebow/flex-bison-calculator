@@ -3,6 +3,9 @@
 
 enum token {IDENTIFICADOR, ENTERO, HEXA, FDT, ERROR_GEN, ERROR_ENTERO};
 extern char lexema[200];
+
+ 
 enum token scanner(void);
+
 
 #endif
