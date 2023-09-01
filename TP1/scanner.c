@@ -7,6 +7,7 @@ int fila , colum , ult_estado;
 char c; // c = caracter
 
 // tabla de transiciones
+
 int TT [8][7] = {
                     {1 , 1 , 1 , 2 , 3 , 0 , 6},
                     {1 , 1 , 1 , 1 , 1 , 5 , 6},
@@ -19,8 +20,18 @@ int TT [8][7] = {
                 };
 
 
+void mostrar_lexema(char lexema[200] , int i){
+    printf("'");
+    for (int d = 0; d < i -1; d++) {
+        printf("%c", lexema[d]);
+    }
+    printf("' ");
+}
 
+
+// esta función cumple con su propósito
 int tipoC (char c){
+
     int tipo;
     if (isalnum(c)) {
         if (isdigit(c)) {
@@ -50,45 +61,64 @@ int tipoC (char c){
 
 
 
-enum token scanner(void){
-    enum token tipo_estado;
 
-    while(estado != 5){
+
+
+
+// el bucle no debería terminar cuando encuentra un fdt, ya que eso le quita la posibilidad de reconocer más de un token en la misma pasada
+
+enum token scanner(void){
+    char l[200]; // BORRAR ESTO QUE ESTA MAL, SOLO SE USA PARA PROBAR QUE LA LÓGICA ES CORRECTA
+    enum token tipo_estado;
+    int i = 0;
+    while(estado != 5 && estado != 6 &&estado != 7){  // mientras que el estado no sea igual a 5 , 6  o 7 
         c = getchar();
+        l[i] = c;
+        i++;
         colum = tipoC(c);
-        ult_estado = estado;
+        ult_estado = estado;    
         estado = TT[estado][colum];
     }
+    
     
     //enum token {IDENTIFICADOR, ENTERO, HEXA, FDT, ERROR_GEN, ERROR_ENTERO};
     
     switch (ult_estado){
     
     case 0:
-        tipo_estado = IDENTIFICADOR; // ERROR (NO ACEPTOR)
+        tipo_estado = ERROR_GEN; // ERROR (NO ACEPTOR)
+        mostrar_lexema(l , i);
+
         break;
 
     case 1:
         tipo_estado = IDENTIFICADOR;
+        mostrar_lexema(l , i);
         break;
     case 2:
         tipo_estado = ERROR_GEN;  // ERROR (NO ACEPTOR)
+        mostrar_lexema(l , i);
         break;
     case 3:
         tipo_estado = ENTERO;
+        mostrar_lexema(l , i);
         break;
     case 4:
         tipo_estado = HEXA;
+        mostrar_lexema(l , i);
         break;
     case 5:
         tipo_estado = ERROR_GEN;  // ERR0R (NO INDICA EL TIPO DE DATO)
+        mostrar_lexema(l , i);
         break;
     case 6:
         tipo_estado = ERROR_GEN;
+        mostrar_lexema(l , i);
         break;
 
     case 7:
         tipo_estado = ERROR_ENTERO;
+        mostrar_lexema(l , i);
         break;
 
     default:
