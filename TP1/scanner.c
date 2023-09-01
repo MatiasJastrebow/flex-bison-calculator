@@ -2,8 +2,8 @@
 #include <ctype.h>
 #include "scanner.h"
 
-int estado = 0;
-int fila , colum , ult_estado;
+
+int fila , colum , estado , ult_estado;
 char c; // c = caracter
 
 // tabla de transiciones
@@ -68,6 +68,7 @@ int tipoC (char c){
 // el bucle no debería terminar cuando encuentra un fdt, ya que eso le quita la posibilidad de reconocer más de un token en la misma pasada
 
 enum token scanner(void){
+    estado = 0;
     char l[200]; // BORRAR ESTO QUE ESTA MAL, SOLO SE USA PARA PROBAR QUE LA LÓGICA ES CORRECTA
     enum token tipo_estado;
     int i = 0;
