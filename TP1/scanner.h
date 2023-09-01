@@ -1,7 +1,7 @@
 #ifndef SCANNER_H_INCLUDED
 #define SCANNER_H_INCLUDED
 
-enum token {IDENTIFICADOR, ENTERO, HEXA, FDT, ERROR_GEN, ERROR_ENTERO};
+enum token {IDENTIFICADOR, ENTERO, HEXA, FDT, ERROR_GEN, ERROR_ENTERO , EOFILE};
 extern char lexema[200];
 
 void mostrar_lexema(char lexema[200] , int i);

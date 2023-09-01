@@ -33,29 +33,33 @@ void mostrar_lexema(char lexema[200] , int i){
 int tipoC (char c){
 
     int tipo;
-    if (isalnum(c)) {
-        if (isdigit(c)) {
-            if (c == '0') {
-                tipo = 3;
-            } else {
-                tipo = 4;
-            }
-        }
-        if (isalpha(c)) {
-            if (c == 'x' || c == 'X') {
-                tipo = 1;
-            } else if ((c >= 'a' && c <= 'f' )|| (c >= 'A' && c <= 'F')) {
-                tipo = 2;
-            } else {
-                tipo = 0;
-            }
-        }
-    } else if (isspace(c)){
-        tipo = 5;
-    } else {
-        tipo = 6;
+    if(c == EOF){  // De esta forma se puede encontrar el límite de lo que se tiene que escanear
+        tipo = -1;
     }
-    
+    else{
+        if (isalnum(c)) {
+            if (isdigit(c)) {
+                if (c == '0') {
+                    tipo = 3;
+                } else {
+                    tipo = 4;
+                }
+            }
+            if (isalpha(c)) {
+                if (c == 'x' || c == 'X') {
+                    tipo = 1;
+                } else if ((c >= 'a' && c <= 'f' )|| (c >= 'A' && c <= 'F')) {
+                    tipo = 2;
+                } else {
+                    tipo = 0;
+                }
+            }
+        } else if (isspace(c)){
+            tipo = 5;
+        } else {
+            tipo = 6;
+        }
+    }
     return tipo;
 }
 
@@ -77,6 +81,10 @@ enum token scanner(void){
         l[i] = c;
         i++;
         colum = tipoC(c);
+        if (colum == -1){  // se rompe el bucle para dejar de escanear
+            ult_estado = -1;
+            break;
+        }
         ult_estado = estado;    
         estado = TT[estado][colum];
     }
@@ -86,6 +94,10 @@ enum token scanner(void){
     
     switch (ult_estado){
     
+    case -1:
+        tipo_estado = EOFILE;
+        break;
+
     case 0:
         tipo_estado = ERROR_GEN; // ERROR (NO ACEPTOR)
         mostrar_lexema(l , i);

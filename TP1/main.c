@@ -4,7 +4,7 @@
 
 int main(){
     enum token salida;
-    for(int i = 0 ; i < 4 ; i++){   // solución temporal para poder corregir los bugs con los tokens
+    do{
         salida = scanner();
 
         if(salida == IDENTIFICADOR){
@@ -26,7 +26,7 @@ int main(){
             printf("ERROR_ENTERO\n");
         }
 
-    }  
+    }while(salida != EOFILE);
 
     return 0;
 }
