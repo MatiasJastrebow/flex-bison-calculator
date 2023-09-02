@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include "scanner.h"
 
-
-int main(){
+int main(){ 
     enum token salida;
     do{
         salida = scanner();
