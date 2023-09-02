@@ -69,8 +69,6 @@ int tipoC (char c){
 
 
 
-// el bucle no debería terminar cuando encuentra un fdt, ya que eso le quita la posibilidad de reconocer más de un token en la misma pasada
-
 enum token scanner(void){
     estado = 0;
     char l[200]; // BORRAR ESTO QUE ESTA MAL, SOLO SE USA PARA PROBAR QUE LA LÓGICA ES CORRECTA
@@ -79,7 +77,7 @@ enum token scanner(void){
     while(estado != 5 && estado != 6 &&estado != 7){  // mientras que el estado no sea igual a 5 , 6  o 7 
         c = getchar();
         l[i] = c;
-        i++;
+        i++;    // lee los espacios tambien
         colum = tipoC(c);
         if (colum == -1){  // se rompe el bucle para dejar de escanear
             ult_estado = -1;
