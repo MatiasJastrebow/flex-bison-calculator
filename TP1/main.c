@@ -26,6 +26,5 @@ int main(){
         }
 
     }while(salida != EOFILE);
-
     return 0;
 }

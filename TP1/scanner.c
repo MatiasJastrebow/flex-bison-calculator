@@ -3,8 +3,10 @@
 #include "scanner.h"
 
 int fila , colum , estado , ult_estado;
-char c; 
+char c;
+
 char lexema[200];
+
 
 int TT [9][7] = {
                     {1 , 1 , 1 , 2 , 3 , 0 , 6},
@@ -61,26 +63,41 @@ int tipoC (char c){
 }
 
 enum token scanner(void){
+    static char aux = EOF;  // Variable estática que almacena el primer caracter del siguiente token cuando encuentra un centinela
+    static int fin = 0;    
     estado = 0;
     enum token token;
     int i = 0;
-    while(estado != 5){  
-        c = getchar();
+    if(fin != 0){   // si el indicador de fin de escaneo es distinto de 0 "piratea" la función scanner para que saltee el while y devuelva el token EOFILE directamente
+        estado = 5;
+        ult_estado = -1;
+    }
+    while(estado != 5){ 
+        if(aux !=EOF){
+            c = aux;
+            aux = EOF;
+        }
+        else{
+            c = getchar();
+        }
+
         colum = tipoC(c);
-        ult_estado = estado; 
+        if(c != EOF){      // para evitar que reconozca a EOF como un caracter fuera del alfabeto, se le impide reescribir el valor a ult_estado, así mantiene el estado anterior (último estado significativo)
+            ult_estado = estado; 
+        }
         estado = TT[estado][colum];
         if(estado == 8){
-            ungetc(c , stdin);
+            aux = c;
             break;
         }
-        if(!isspace(c)){
+        if(!isspace(c) && c != EOF){
             lexema[i] = c;
             i++;
         }
         if (colum == -1){  
-            ult_estado = -1;
-            break;
+            fin = 1;  // Cuando el scanner lee el caracter EOF cambia el valor de fin, pero continúa con el bucle para que pueda devolver el token correspondiente a lo que reconoce
         }
+
     }
     
     switch (ult_estado){
