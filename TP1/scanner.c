@@ -63,7 +63,7 @@ int tipoC (char c){
 }
 
 enum token scanner(void){
-    static char aux = EOF;  // Variable estática que almacena el primer caracter del siguiente token cuando encuentra un centinela
+    //static char aux = EOF;  // Variable estática que almacena el primer caracter del siguiente token cuando encuentra un centinela
     static int fin = 0;    
     estado = 0;
     enum token token;
@@ -73,21 +73,14 @@ enum token scanner(void){
         ult_estado = -1;
     }
     while(estado != 5){ 
-        if(aux !=EOF){
-            c = aux;
-            aux = EOF;
-        }
-        else{
-            c = getchar();
-        }
-
+        c = getchar();
         colum = tipoC(c);
         if(c != EOF){      // para evitar que reconozca a EOF como un caracter fuera del alfabeto, se le impide reescribir el valor a ult_estado, así mantiene el estado anterior (último estado significativo)
             ult_estado = estado; 
         }
         estado = TT[estado][colum];
         if(estado == 8){
-            aux = c;
+            ungetc(c , stdin);
             break;
         }
         if(!isspace(c) && c != EOF){
