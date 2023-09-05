@@ -63,7 +63,6 @@ int tipoC (char c){
 }
 
 enum token scanner(void){
-    //static char aux = EOF;  // Variable estática que almacena el primer caracter del siguiente token cuando encuentra un centinela
     static int fin = 0;    
     estado = 0;
     enum token token;
