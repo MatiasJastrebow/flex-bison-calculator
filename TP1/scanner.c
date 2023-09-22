@@ -3,24 +3,23 @@
 #include "scanner.h"
 
 int fila , colum , estado ;
-char c;
+int c;
 
 char lexema[200];
 
 
-int TT [12][8] = {
-                    {1 , 1 , 1 , 2 , 3 , 0 , 8 , 10},
-                    {1 , 1 , 1 , 1 , 1 , 5 , 8 , 10},
-                    {9 , 4 , 9 , 3 , 3 , 6 , 8 , 10},
-                    {8 , 8 , 8 , 3 , 3 , 6 , 8 , 10},
-                    {11,11 , 4 , 4 , 4 , 7 , 8 , 10},
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},  // a partir de acá comienzan las columnas de los estados de salida (aceptores)
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 8 },  // si luego de leer un EOF seguimos leyendo caracteres es que tenemos un problema ...
-                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 8 }   // para completar la tabla se agrega una fila para el estado centinela
+int TT [11][8] = {
+                    {1 , 1 , 1 , 2 , 3 , 0 , 5 , 99},
+                    {1 , 1 , 1 , 1 , 1 , 7 , 12, 99},
+                    {6 , 4 , 6 , 3 , 3 , 8 , 12, 99},
+                    {6 , 6 , 6 , 3 , 3 , 8 , 12, 99},
+                    {12, 12, 4 , 4 , 4 , 9 , 12, 99},
+                    {12, 12, 12, 12, 12, 10, 5 , 99},  // a partir de acá comienzan las columnas de los estados de salida (aceptores)
+                    {6 , 6 , 6 , 6 , 6 , 11, 12, 99},
+                    {10, 10, 10, 10, 10, 10, 10, 10},
+                    {10, 10, 10, 10, 10, 10, 10, 10},
+                    {10, 10, 10, 10, 10, 10, 10, 10},
+                    {10, 10, 10, 10, 10, 10, 10, 10}  // si luego de leer un EOF seguimos leyendo caracteres es que tenemos un problema ...  // para completar la tabla se agrega una fila para el estado centinela
                 };
 
 void mostrar_lexema(char lexema[200] , int i){
@@ -40,7 +39,7 @@ int tipoC(char c){
         tipo = FIN;
     }
     else{
-        if(isalnum(c)){
+        if(isdigit(c)){
             if(c == '0'){
                 tipo =  CERO;
             }
@@ -49,7 +48,7 @@ int tipoC(char c){
             }
         }
         else{
-            if (isalpha(c)){
+            if(isalpha(c)){
                 if(c == 'x' || c == 'X'){
                     tipo = X;
                 }
@@ -80,46 +79,46 @@ int tipoC(char c){
 enum token scanner(int* index){
     enum token token;
     estado = 0;
-    (*index)  = 0;
-    while(estado < 5){  // mientras que no se toque un estado aceptor
+    (*index) = 0;
+    while(estado < 7){  // mientras que no se toque un estado aceptor
         c = getchar();
         colum = tipoC(c);
-        if(TT[estado][colum] == 11){  // ANTES DE ASIGNARLE EL VALOR DE TT AL ESTADO, SE CONSULTA QUE ESTE NO SEA EL ESTADO CENTINELA
-            ungetc(c  ,stdin);
+        if(TT[estado][colum] == 12){  // ANTES DE ASIGNARLE EL VALOR DE TT AL ESTADO, SE CONSULTA QUE ESTE NO SEA EL ESTADO CENTINELA
+            ungetc(c, stdin);
             break;
         }
-
+        
         estado = TT[estado][colum]; 
         
         if(!isspace(c) && c != EOF){  // no escribe contenido en el lexema si se trata de un FDT
             lexema[(*index)] = c;
-            (*index) ++;
+            (*index)++;
         }
 
     }
     switch(estado){
 
-        case 5:
+        case 7:
             token = IDENTIFICADOR;
             break;
 
-        case 6:
+        case 8:
             token = ENTERO;
             break;
 
-        case 7:
+        case 9:
             token = HEXADECIMAL;
             break;
 
-        case 8:
+        case 10:
             token = ERROR_GEN;
             break;
 
-        case 9:
+        case 11:
             token = ERROR_ENTERO;
             break;
 
-        case 10:
+        case 99:
             token = EOFILE;
             break;
 
