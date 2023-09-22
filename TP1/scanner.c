@@ -2,24 +2,26 @@
 #include <ctype.h>
 #include "scanner.h"
 
-int fila , colum , estado , ult_estado;
+int fila , colum , estado ;
 char c;
 
 char lexema[200];
 
 
-int TT [9][7] = {
-                    {1 , 1 , 1 , 2 , 3 , 0 , 6},
-                    {1 , 1 , 1 , 1 , 1 , 5 , 6},
-                    {7 , 4 , 7 , 3 , 3 , 5 , 6},
-                    {7 , 7 , 7 , 3 , 3 , 5 , 7},
-                    {8 , 5 , 4 , 4 , 4 , 5 , 6},
-                    {5 , 5 , 5 , 5 , 5 , 5 , 5},
-                    {6 , 6 , 6 , 6 , 6 , 5 , 6},
-                    {7 , 7 , 7 , 7 , 7 , 5 , 7},
-                    {8 , 8 , 8 , 8 , 8 , 5 , 8}
+int TT [12][8] = {
+                    {1 , 1 , 1 , 2 , 3 , 0 , 8 , 10},
+                    {1 , 1 , 1 , 1 , 1 , 5 , 8 , 10},
+                    {9 , 4 , 9 , 3 , 3 , 6 , 8 , 10},
+                    {8 , 8 , 8 , 3 , 3 , 6 , 8 , 10},
+                    {11,11 , 4 , 4 , 4 , 7 , 8 , 10},
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},  // a partir de acá comienzan las columnas de los estados de salida (aceptores)
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 10},
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 8 },  // si luego de leer un EOF seguimos leyendo caracteres es que tenemos un problema ...
+                    {8 , 8 , 8 , 8 , 8 , 8 , 8 , 8 }   // para completar la tabla se agrega una fila para el estado centinela
                 };
-
 
 void mostrar_lexema(char lexema[200] , int i){
     printf("'");
@@ -29,127 +31,104 @@ void mostrar_lexema(char lexema[200] , int i){
     printf("' ");
 }
 
-int tipoC (char c){
 
+
+// comprobar la correcta definición de esta función
+int tipoC(char c){
     enum tipoChar tipo;
-    if(c == EOF){  
-        tipo = -1;
+    if (c == EOF){
+        tipo = FIN;
     }
     else{
-        if (isalnum(c)) {
-            if (isdigit(c)) {
-                if (c == '0') {
-                    tipo = CERO;
-                } else {
-                    tipo = DIG;
-                }
+        if(isalnum(c)){
+            if(c == '0'){
+                tipo =  CERO;
             }
-            if (isalpha(c)) {
-                if (c == 'x' || c == 'X') {
+            else{
+                tipo = DIG;
+            }
+        }
+        else{
+            if (isalpha(c)){
+                if(c == 'x' || c == 'X'){
                     tipo = X;
-                } else if ((c >= 'a' && c <= 'f' ) || (c >= 'A' && c <= 'F')) {
-                    tipo = A_F;
-                } else {
-                    tipo = INICIAL;
+                }
+                else{
+                    if((c >= 'a' && c <= 'f' ) || (c >= 'A' && c <= 'F')){
+                        tipo = A_F;
+                    }
+                    else{
+                        tipo = G_W_YZ;
+                    }
                 }
             }
-        } else if (isspace(c)){
-            tipo = SPACE;
-        } else {
-            tipo = OTRO;
+            else{
+                if(isspace(c)){
+                    tipo = SPACE;
+                }
+                else{
+                    tipo = OTRO;
+                }
+            }
         }
     }
     return tipo;
 }
 
-enum token scanner(void){
-    static int fin = 0;    
-    estado = 0;
+
+
+enum token scanner(int* index){
     enum token token;
-    int i = 0;
-    if(fin != 0){   // si el indicador de fin de escaneo es distinto de 0 "piratea" la función scanner para que saltee el while y devuelva el token EOFILE directamente
-        estado = 5;
-        ult_estado = -1;
-    }
-    while(estado != 5){ 
+    estado = 0;
+    (*index)  = 0;
+    while(estado < 5){  // mientras que no se toque un estado aceptor
         c = getchar();
         colum = tipoC(c);
-        if(c != EOF){      // para evitar que reconozca a EOF como un caracter fuera del alfabeto, se le impide reescribir el valor a ult_estado, así mantiene el estado anterior (último estado significativo)
-            ult_estado = estado; 
-        }
-        estado = TT[estado][colum];
-        if(estado == 8){
-            ungetc(c , stdin);
+        if(TT[estado][colum] == 11){  // ANTES DE ASIGNARLE EL VALOR DE TT AL ESTADO, SE CONSULTA QUE ESTE NO SEA EL ESTADO CENTINELA
+            ungetc(c  ,stdin);
             break;
         }
-        if(!isspace(c) && c != EOF){
-            lexema[i] = c;
-            i++;
-        }
-        if (colum == -1){  
-            fin = 1;  // Cuando el scanner lee el caracter EOF cambia el valor de fin, pero continúa con el bucle para que pueda devolver el token correspondiente a lo que reconoce
+
+        estado = TT[estado][colum]; 
+        
+        if(!isspace(c) && c != EOF){  // no escribe contenido en el lexema si se trata de un FDT
+            lexema[(*index)] = c;
+            (*index) ++;
         }
 
     }
-    
-    switch (ult_estado){
-    
-    case -1:
+    switch(estado){
 
-        token = EOFILE;
-        break;
+        case 5:
+            token = IDENTIFICADOR;
+            break;
 
-    case 0:
+        case 6:
+            token = ENTERO;
+            break;
 
-        token = ERROR_GEN; 
-        mostrar_lexema(lexema , i);
-        break;
+        case 7:
+            token = HEXADECIMAL;
+            break;
 
-    case 1:
+        case 8:
+            token = ERROR_GEN;
+            break;
 
-        token = IDENTIFICADOR;
-        mostrar_lexema(lexema , i);
-        break;
+        case 9:
+            token = ERROR_ENTERO;
+            break;
 
-    case 2:
-       
-        token = ENTERO;  
-        mostrar_lexema(lexema , i);
-        break;
+        case 10:
+            token = EOFILE;
+            break;
 
-    case 3:
-        
-        token = ENTERO;
-        mostrar_lexema(lexema , i);
-        break;
+        // como esta función nunca va a devolver un estado = 11, no tiene ningún sentido declarar un token CENTINELA  
 
-    case 4:
-        
-        token = HEXADECIMAL;
-        mostrar_lexema(lexema , i);
-        break;
-
-    case 5:
-
-        token = ERROR_GEN;  
-        mostrar_lexema(lexema , i);
-        break;
-
-    case 6:
-
-        token = ERROR_GEN;
-        mostrar_lexema(lexema , i);
-        break;
-
-    case 7:
-
-        token = ERROR_ENTERO;
-        mostrar_lexema(lexema , i);
-        break;
-
-    default:
-        break;
+        //default:  // Esto no es obligatorio, pero sirve para apegarse a las buenas prácticas de la programación
+        //    token = UNEXPECTED_ERROR;   
+        //    break;
     }
-        
     return token;
 }
+

@@ -2,28 +2,34 @@
 #include "scanner.h"
 
 int main(){ 
+    int i;
     enum token salida;
     do{
-        salida = scanner();
+        salida = scanner(&i);  // cada vez que termina la ejecución se utiliza el valor "pasado por referencia" del índice
+
+        mostrar_lexema(lexema , i);
 
         if(salida == IDENTIFICADOR){
             printf("ES UN IDENTIFICADOR\n");
         }
-        if(salida == ENTERO){
+        else if(salida == ENTERO){
             printf("ES UN ENTERO\n");
         }
-        if(salida == HEXADECIMAL){
+        else if(salida == HEXADECIMAL){
             printf("ES UN HEXADECIMAL\n");
         }
-        if(salida == FDT){
-            printf("ES UN FDT\n");
-        }
-        if(salida == ERROR_GEN){
+
+        else if(salida == ERROR_GEN){
             printf("ERROR_GEN\n");
         }
-        if(salida == ERROR_ENTERO){
+        else if(salida == ERROR_ENTERO){
             printf("ERROR_ENTERO\n");
         }
+        
+        else{
+            printf("OCURRIO UN ERROR INESPERADO\n");
+        }
+        
 
     }while(salida != EOFILE);
     return 0;
