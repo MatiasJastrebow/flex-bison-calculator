@@ -1,38 +1,18 @@
 #include <stdio.h>
 #include "scanner.h"
 
+void mostrar_salida(enum token salida){
+    printf("%s es un %s \n", lexema, casting_token(salida));
+}
+
 int main() {
-    int i;
     enum token salida;
-    salida = scanner(&i);
+    salida = scanner();
 
     while(salida != EOFILE) {
 
-        mostrar_lexema(lexema, i);
-
-        switch(salida){
-            case IDENTIFICADOR:
-                printf("ES UN IDENTIFICADOR\n");
-                break;
-
-            case ENTERO:
-                printf("ES UN ENTERO\n");
-                break;
-
-            case HEXADECIMAL:
-                printf("ES UN HEXADECIMAL\n");
-                break;
-
-            case ERROR_GEN:
-                printf("ERROR_GEN\n");
-                break;
-
-            case ERROR_ENTERO:
-                printf("ERROR_ENTERO\n");
-                break;
-        }
-
-        salida = scanner(&i);
+        mostrar_salida(salida);
+        salida = scanner();
     }
 
     return 0;

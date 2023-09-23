@@ -22,14 +22,28 @@ int TT [15][8] = {
                     {10, 10, 10, 10, 10, 10, 10, 10}    
                 };
 
-void mostrar_lexema(char lexema[200] , int i){
-    printf("'");
-    for (int d = 0; d < i; d++) {
-        printf("%c", lexema[d]);
-    }
-    printf("' ");
+char* casting_token(enum token salida){
+    switch(salida){
+            case IDENTIFICADOR:
+                return "IDENTIFICADOR";
+                break;
+            case ENTERO:
+                return "ENTERO";
+                break;
+            case HEXADECIMAL:
+                return "HEXADECIMAL";
+                break;
+            case ERROR_GEN:
+                return "ERROR GENERAL";
+                break;
+            case ERROR_ENTERO:
+                return "ENTERO MAL FORMADO";
+                break;
+            default:
+                return "UNEXPECTED_ERROR";
+                break;
+        }
 }
-
 int tipoC(char c){
     enum tipoChar tipo;
     if (c == EOF){
@@ -71,12 +85,12 @@ int tipoC(char c){
     return tipo;
 }
 
-enum token scanner(int* index){
+enum token scanner(void){
     int colum, estado;
     int c;
     enum token token;
     estado = 0;
-    (*index) = 0;
+    int index = 0;
 
     while(estado < 7){  // mientras que no se toque un estado aceptor 
         c = getchar();
@@ -91,8 +105,8 @@ enum token scanner(int* index){
         estado = TT[estado][colum]; 
         
         if(!isspace(c) && c != EOF){  // no escribe contenido en el lexema si se trata de un FDT
-            lexema[(*index)] = c;
-            (*index)++;
+            lexema[index] = c;
+            index++;
         }
     }
 
@@ -133,7 +147,12 @@ enum token scanner(int* index){
         case 99:
             token = EOFILE;
             break;
-    }
 
+        default:
+            token = UNEXPECTED_ERROR;
+            break;
+    }
+    
+    lexema[index++] = '\0';
     return token;
 }
