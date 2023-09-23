@@ -2,24 +2,24 @@
 #include <ctype.h>
 #include "scanner.h"
 
-int fila , colum , estado ;
-int c;
-
 char lexema[200];
 
-
-int TT [11][8] = {
+int TT [15][8] = {
                     {1 , 1 , 1 , 2 , 3 , 0 , 5 , 99},
-                    {1 , 1 , 1 , 1 , 1 , 7 , 12, 99},
-                    {6 , 4 , 6 , 3 , 3 , 8 , 12, 99},
-                    {6 , 6 , 6 , 3 , 3 , 8 , 12, 99},
-                    {12, 12, 4 , 4 , 4 , 9 , 12, 99},
-                    {12, 12, 12, 12, 12, 10, 5 , 99},  // a partir de acá comienzan las columnas de los estados de salida (aceptores)
-                    {6 , 6 , 6 , 6 , 6 , 11, 12, 99},
+                    {1 , 1 , 1 , 1 , 1 , 7 , 12, 12},
+                    {6 , 4 , 6 , 3 , 3 , 8 , 13, 13},
+                    {6 , 6 , 6 , 3 , 3 , 8 , 13, 13},
+                    {14, 14, 4 , 4 , 4 , 9 , 14, 14},
+                    {12, 12, 12, 13, 13, 10, 5 , 10},  
+                    {6 , 6 , 6 , 6 , 6 , 11, 11, 11},
+                    {10, 10, 10, 10, 10, 10, 10, 10},  
+                    {10, 10, 10, 10, 10, 10, 10, 10},   
+                    {10, 10, 10, 10, 10, 10, 10, 10},   
                     {10, 10, 10, 10, 10, 10, 10, 10},
                     {10, 10, 10, 10, 10, 10, 10, 10},
-                    {10, 10, 10, 10, 10, 10, 10, 10},
-                    {10, 10, 10, 10, 10, 10, 10, 10}  // si luego de leer un EOF seguimos leyendo caracteres es que tenemos un problema ...  // para completar la tabla se agrega una fila para el estado centinela
+                    {10, 10, 10, 10, 10, 10, 10, 10},   
+                    {10, 10, 10, 10, 10, 10, 10, 10},   
+                    {10, 10, 10, 10, 10, 10, 10, 10}    
                 };
 
 void mostrar_lexema(char lexema[200] , int i){
@@ -30,9 +30,6 @@ void mostrar_lexema(char lexema[200] , int i){
     printf("' ");
 }
 
-
-
-// comprobar la correcta definición de esta función
 int tipoC(char c){
     enum tipoChar tipo;
     if (c == EOF){
@@ -74,28 +71,31 @@ int tipoC(char c){
     return tipo;
 }
 
-
-
 enum token scanner(int* index){
+    int colum, estado;
+    int c;
     enum token token;
     estado = 0;
     (*index) = 0;
-    while(estado < 7){  // mientras que no se toque un estado aceptor
+
+    while(estado < 7){  // mientras que no se toque un estado aceptor 
         c = getchar();
         colum = tipoC(c);
-        if(TT[estado][colum] == 12){  // ANTES DE ASIGNARLE EL VALOR DE TT AL ESTADO, SE CONSULTA QUE ESTE NO SEA EL ESTADO CENTINELA
-            ungetc(c, stdin);
-            break;
-        }
         
+        if(TT[estado][colum] >= 12){  // ANTES DE ASIGNARLE EL VALOR DE TT AL ESTADO, SE CONSULTA QUE ESTE NO SEA EL ESTADO CENTINELA
+            ungetc(c, stdin);
+            estado = TT[estado][colum];
+            break; 
+        }
+
         estado = TT[estado][colum]; 
         
         if(!isspace(c) && c != EOF){  // no escribe contenido en el lexema si se trata de un FDT
             lexema[(*index)] = c;
             (*index)++;
         }
-
     }
+
     switch(estado){
 
         case 7:
@@ -118,16 +118,22 @@ enum token scanner(int* index){
             token = ERROR_ENTERO;
             break;
 
+        case 12:
+            token = IDENTIFICADOR;
+            break;
+            
+        case 13:
+            token = ENTERO;
+            break;
+            
+        case 14:
+            token = HEXADECIMAL;
+            break;
+    
         case 99:
             token = EOFILE;
             break;
-
-        // como esta función nunca va a devolver un estado = 11, no tiene ningún sentido declarar un token CENTINELA  
-
-        //default:  // Esto no es obligatorio, pero sirve para apegarse a las buenas prácticas de la programación
-        //    token = UNEXPECTED_ERROR;   
-        //    break;
     }
+
     return token;
 }
-
