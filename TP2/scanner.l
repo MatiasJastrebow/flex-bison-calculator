@@ -15,13 +15,13 @@ funct sin|cos|tan|asin|acos|atan|log|sqrt
 inval [[:punct:]]{-}[+\-*/=^)(]
 
 %%
-{id}         				return ID;
-{id}*{inval}+({letra}|{dig}|{inval})* 	return ID_INVAL;
-{entero}|{real}                		return NUM;
+{funct}                        		return FUNCT;
 var|salir                      		return KEYWORD;
+{id}         				return ID;
+{id}+{inval}+({letra}|{dig}|{inval})* 	return ID_INVAL;
+{entero}|{real}                		return NUM;
 [+\-*/]=?|^|=                 		return OPER;
 [)(]	                       		return PUNCT;
-{funct}                        		return FUNCT;
 {inval}+				return CADENA_INVAL;
 \n					printf("'NL'\n");						
 .|\s	                           	;
