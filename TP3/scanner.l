@@ -1,9 +1,10 @@
 %{
 #include <stdio.h>
-#include "tokens.h"
+#include "parser.h"
 %}
 %option header-file="scanner.h"
 %option outfile="scanner.c"
+%option yylineno
 %option nounput
 %option noinput
 
@@ -23,11 +24,11 @@ invalNRO {letra}|{inval}|{nro}
 var                      		            return PR_VAR;
 salir					                    return PR_SALIR;
 {id}         				                return ID;
-{id}+{inval}+{invalID}*		 	            printf("Error Lexico: Identificador invalido: %s\n", yytext);
+{id}+{inval}+{invalID}*		 	            printf("Error Lexico: ID invalido: %s", yytext);
 {nro}		               		            return NUM;
-{real}({letra}|{inval})+{invalNRO}*	        printf("Error Lexico: Real invalido: %s\n", yytext);
-{entero}({letra}|{inval})+{invalNRO}*	    printf("Error Lexico: Constante invalida: %s\n", yytext);
-{inval}+				                    printf("Error Lexico: Cadena desconocida: %s\n", yytext);
+{real}({letra}|{inval})+{invalNRO}*	        printf("Error Lexico: Real invalido: %s", yytext);
+{entero}({letra}|{inval})+{invalNRO}*	    printf("Error Lexico: Constante invalida: %s", yytext);
+{inval}+				                    printf("Error Lexico: Cadena desconocida: %s", yytext);
 \+					                        return MAS;
 \+=					                        return MAS_IGUAL;
 -					                        return MENOS;
