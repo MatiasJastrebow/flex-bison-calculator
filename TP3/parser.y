@@ -35,7 +35,7 @@ linea:
     | expresion NL                      {printf("Expresion\n");}
     | PR_VAR ID NL                      {printf("Define ID como variable\n");}
     | PR_VAR ID IGUAL expresion NL      {printf("Define ID como variable con valor inicial\n");}
-    | PR_SALIR                       
+    | PR_SALIR                          
     | error NL                          {yyerrok;}
     ;
 
