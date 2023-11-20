@@ -9,7 +9,7 @@ void yyerror(const char *);
 
 %defines "parser.h"
 %output "parser.c"
-%token FDT ID NUM PR_VAR PR_SALIR MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
+%token ID NUM PR_VAR PR_SALIR MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
 %define api.value.type {char *}
 %define parse.error verbose
 %start sesion
@@ -50,18 +50,17 @@ expresion:
 
 termino:
     primaria
-    | expresion MAS termino             {printf("Suma\n");}
-    | expresion MENOS termino           {printf("Resta\n");}
-    | expresion POR termino             {printf("Multiplicacion\n");}
-    | expresion DIV termino             {printf("Division\n");}
-    | expresion POT termino             {printf("Potenciacion\n");}
+    | termino MAS termino             {printf("Suma\n");}
+    | termino MENOS termino           {printf("Resta\n");}
+    | termino POR termino             {printf("Multiplicacion\n");}
+    | termino DIV termino             {printf("Division\n");}
+    | termino POT termino             {printf("Potenciacion\n");}
     ;
 
 primaria:
     ID                                  {printf("ID\n");}
     | NUM                               {printf("Numero\n");}
-    | MENOS NUM %prec NEG               {printf("Cambio signo\n");}
-    | MENOS ID %prec NEG                {printf("ID\n");}
+    | MENOS primaria %prec NEG          {printf("Cambio signo\n");}
     | PAR_IZQ expresion PAR_DER         {printf("Cierra parentesis\n");}
     | ID PAR_IZQ expresion PAR_DER      {printf("Funcion\n");}
     ;
