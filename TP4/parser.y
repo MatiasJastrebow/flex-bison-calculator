@@ -1,6 +1,7 @@
 %code top{
 #include <stdio.h>
 #include "scanner.h"
+#include "calc.h"
 }
 
 %code provides{
@@ -9,9 +10,13 @@ void yyerror(const char *);
 
 %defines "parser.h"
 %output "parser.c"
-%token ID NUM PR_VAR PR_SALIR MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
-%define api.value.type {char *}
-%define parse.error verbose
+%define api.value.type union
+%token <double> NUM
+%token <symrec*> ID
+%token <char*> PR_VAR PR_SALIR
+%token <char> MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
+%nterm <double> primaria termino expresion linea
+
 %start sesion
 
 %precedence IGUAL
@@ -31,37 +36,36 @@ sesion:
     ;
 
 linea:
-    NL                                  {printf("\n");}
-    | expresion NL                      {printf("Expresion\n");}
-    | PR_VAR ID NL                      {printf("Define ID como variable\n");}
+    NL                                  {$$ = $1;}
+    | expresion NL                      {printf ("%.10g\n", $1);}
+    | PR_VAR ID NL                      {$$ = declarar_var($2);}
     | PR_VAR ID IGUAL expresion NL      {printf("Define ID como variable con valor inicial\n");}
-    | PR_SALIR                          
-    | error NL                          {yyerrok;}
+    | PR_SALIR                          {;}
     ;
 
 expresion:
     termino
-    | ID IGUAL expresion                {printf("Asignacion\n");}
-    | ID MAS_IGUAL expresion            {printf("Asignacion con suma\n");}
-    | ID MENOS_IGUAL expresion          {printf("Asignacion con resta\n");}
-    | ID POR_IGUAL expresion            {printf("Asignacion con multiplicacion\n");}
-    | ID DIV_IGUAL expresion            {printf("Asignacion con division\n");}
+    | ID IGUAL expresion                {$$ = asignacion($1, $3);}
+    | ID MAS_IGUAL expresion            {$$ = asignacion($1, $1->value.var += $3);}
+    | ID MENOS_IGUAL expresion          {$$ = asignacion($1, $1->value.var -= $3);}
+    | ID POR_IGUAL expresion            {$$ = asignacion($1, $1->value.var *= $3);}
+    | ID DIV_IGUAL expresion            {$$ = asignacion($1, $1->value.var /= $3);}
     ;
 
 termino:
     primaria
-    | termino MAS termino             {printf("Suma\n");}
-    | termino MENOS termino           {printf("Resta\n");}
-    | termino POR termino             {printf("Multiplicacion\n");}
-    | termino DIV termino             {printf("Division\n");}
-    | termino POT termino             {printf("Potenciacion\n");}
+    | termino MAS termino             {$$ = $1 + $3;}
+    | termino MENOS termino           {$$ = $1 - $3;}
+    | termino POR termino             {$$ = $1 * $3;}
+    | termino DIV termino             {$$ = $1 / $3;}
+    | termino POT termino             {$$ = (int)$1 ^ (int)$3;}
     ;
 
 primaria:
-    ID                                  {printf("ID\n");}
-    | NUM                               {printf("Numero\n");}
-    | MENOS primaria %prec NEG          {printf("Cambio signo\n");}
-    | PAR_IZQ expresion PAR_DER         {printf("Cierra parentesis\n");}
-    | ID PAR_IZQ expresion PAR_DER      {printf("Funcion\n");}
+    ID                                  {$$ = var_declarada($1);}
+    | NUM                               {$$ = $1;}
+    | MENOS primaria %prec NEG          {$$ = -$2;}
+    | PAR_IZQ expresion PAR_DER         {$$ = $2;}
+    | ID PAR_IZQ expresion PAR_DER      {$$ = funcion_existente($1, $3);}
     ;
 %%
