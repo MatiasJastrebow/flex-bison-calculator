@@ -24,9 +24,9 @@ invalNRO {letra}|{inval}|{nro}
 %%
 var                      		            return PR_VAR;
 salir					                    return PR_SALIR;
-{id}         				                { if(getsym(yytext)){
+{id}         				                { if(yylval.ID = getsym(yytext)){
                                                     return (getsym(yytext)->type);
-                                                } else {
+                                            } else {
                                                     yylval.ID = malloc (sizeof (struct symrec)); 
                                                     yylval.ID->name = strdup(yytext); 
                                                     yylval.ID->type = ID;
