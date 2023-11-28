@@ -1,13 +1,8 @@
 %code top{
 #include <stdio.h>
+#include <math.h>
 #include "scanner.h"
 #include "calc.h"
-}
-
-%union{
-    double val;
-    char caracter;
-    struct symrec *symrec;
 }
 
 %code provides{
@@ -16,13 +11,13 @@ void yyerror(const char *);
 
 %defines "parser.h"
 %output "parser.c"
-%token <val> NUM
-%token <symrec*> ID
-%token <caracter*> PR_VAR PR_SALIR
-%token <caracter> MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
-%type <val> primaria termino expresion linea
-
-%start sesion
+%define api.value.type union
+%token <double> NUM
+%token <struct symrec *> ID FUN
+%token <char*> PR_VAR PR_SALIR
+%token <char> MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
+%type <double> primaria termino expresion linea
+%define parse.error verbose
 
 %precedence IGUAL
 %precedence MAS_IGUAL
@@ -42,19 +37,20 @@ sesion:
 
 linea:
     NL                                  {$$ = $1;}
-    | expresion NL                      {printf ("%.10g\n", $1);}
-    | PR_VAR ID NL                      {$$ = declarar_var($2);}
-    | PR_VAR ID IGUAL expresion NL      {printf("Define ID como variable con valor inicial\n");}
+    | expresion NL                      {printf("%.10g\n", $1);}
+    | PR_VAR ID NL                      {putsym($2->name, ID); $$ = $2->value.var;}
+    | PR_VAR ID IGUAL expresion NL      {putsym($2->name, ID); $2->value.var = $4; $$ = $4;}
     | PR_SALIR                          {;}
+    | error NL                          {yyerrok;}
     ;
 
 expresion:
     termino
-    | ID IGUAL expresion                {$$ = $3; asignacion($1, $3);}
-    | ID MAS_IGUAL expresion            {$$ = $3; asignacion($1, $1->value.var + $3);}
-    | ID MENOS_IGUAL expresion          {$$ = $3; asignacion($1, $1->value.var - $3);}
-    | ID POR_IGUAL expresion            {$$ = $3; asignacion($1, $1->value.var * $3);}
-    | ID DIV_IGUAL expresion            {$$ = $3; asignacion($1, $1->value.var / $3);}
+    | ID IGUAL expresion                { $$ = $3; $1->value.var = $3; }
+    | ID MAS_IGUAL expresion            { $$ = $3; $1->value.var += $3; }
+    | ID MENOS_IGUAL expresion          { $$ = $3; $1->value.var -= $3; }
+    | ID POR_IGUAL expresion            { $$ = $3; $1->value.var *= $3; }
+    | ID DIV_IGUAL expresion            { $$ = $3; $1->value.var /= $3; }
     ;
 
 termino:
@@ -63,14 +59,14 @@ termino:
     | termino MENOS termino           {$$ = $1 - $3;}
     | termino POR termino             {$$ = $1 * $3;}
     | termino DIV termino             {$$ = $1 / $3;}
-    | termino POT termino             {$$ = (int)$1 ^ (int)$3;}
+    | termino POT termino             {$$ = pow($1, $3);}
     ;
 
 primaria:
-    ID                                  {$$ = var_declarada($1);}
+    ID                                  {$$ = $1->value.var;}
     | NUM                               {$$ = $1;}
     | MENOS primaria %prec NEG          {$$ = -$2;}
     | PAR_IZQ expresion PAR_DER         {$$ = $2;}
-    | ID PAR_IZQ expresion PAR_DER      {$$ = funcion_existente($1, $3);}
+    | FUN PAR_IZQ expresion PAR_DER     {$$ = $1->value.fun($3);}
     ;
 %%

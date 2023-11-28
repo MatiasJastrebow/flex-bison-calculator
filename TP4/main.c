@@ -1,7 +1,9 @@
 #include <stdio.h>
+#include <math.h>
 #include "scanner.h"
-#include "parser.h"
 #include "calc.h"
+#include "parser.h"
+
 
 int main() {
 	init_table();

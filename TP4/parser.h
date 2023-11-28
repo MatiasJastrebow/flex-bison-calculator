@@ -56,22 +56,23 @@ extern int yydebug;
     YYUNDEF = 257,                 /* "invalid token"  */
     NUM = 258,                     /* NUM  */
     ID = 259,                      /* ID  */
-    PR_VAR = 260,                  /* PR_VAR  */
-    PR_SALIR = 261,                /* PR_SALIR  */
-    MAS = 262,                     /* MAS  */
-    MAS_IGUAL = 263,               /* MAS_IGUAL  */
-    MENOS = 264,                   /* MENOS  */
-    MENOS_IGUAL = 265,             /* MENOS_IGUAL  */
-    POR = 266,                     /* POR  */
-    POR_IGUAL = 267,               /* POR_IGUAL  */
-    DIV = 268,                     /* DIV  */
-    DIV_IGUAL = 269,               /* DIV_IGUAL  */
-    POT = 270,                     /* POT  */
-    IGUAL = 271,                   /* IGUAL  */
-    PAR_IZQ = 272,                 /* PAR_IZQ  */
-    PAR_DER = 273,                 /* PAR_DER  */
-    NL = 274,                      /* NL  */
-    NEG = 275                      /* NEG  */
+    FUN = 260,                     /* FUN  */
+    PR_VAR = 261,                  /* PR_VAR  */
+    PR_SALIR = 262,                /* PR_SALIR  */
+    MAS = 263,                     /* MAS  */
+    MAS_IGUAL = 264,               /* MAS_IGUAL  */
+    MENOS = 265,                   /* MENOS  */
+    MENOS_IGUAL = 266,             /* MENOS_IGUAL  */
+    POR = 267,                     /* POR  */
+    POR_IGUAL = 268,               /* POR_IGUAL  */
+    DIV = 269,                     /* DIV  */
+    DIV_IGUAL = 270,               /* DIV_IGUAL  */
+    POT = 271,                     /* POT  */
+    IGUAL = 272,                   /* IGUAL  */
+    PAR_IZQ = 273,                 /* PAR_IZQ  */
+    PAR_DER = 274,                 /* PAR_DER  */
+    NL = 275,                      /* NL  */
+    NEG = 276                      /* NEG  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -80,13 +81,30 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 7 "parser.y"
+  char MAS;                                /* MAS  */
+  char MAS_IGUAL;                          /* MAS_IGUAL  */
+  char MENOS;                              /* MENOS  */
+  char MENOS_IGUAL;                        /* MENOS_IGUAL  */
+  char POR;                                /* POR  */
+  char POR_IGUAL;                          /* POR_IGUAL  */
+  char DIV;                                /* DIV  */
+  char DIV_IGUAL;                          /* DIV_IGUAL  */
+  char POT;                                /* POT  */
+  char IGUAL;                              /* IGUAL  */
+  char PAR_IZQ;                            /* PAR_IZQ  */
+  char PAR_DER;                            /* PAR_DER  */
+  char NL;                                 /* NL  */
+  char* PR_VAR;                            /* PR_VAR  */
+  char* PR_SALIR;                          /* PR_SALIR  */
+  double NUM;                              /* NUM  */
+  double linea;                            /* linea  */
+  double expresion;                        /* expresion  */
+  double termino;                          /* termino  */
+  double primaria;                         /* primaria  */
+  struct symrec * ID;                      /* ID  */
+  struct symrec * FUN;                     /* FUN  */
 
-    double val;
-    char caracter;
-    struct symrec *symrec;
-
-#line 90 "parser.h"
+#line 108 "parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -101,10 +119,10 @@ extern YYSTYPE yylval;
 int yyparse (void);
 
 /* "%code provides" blocks.  */
-#line 13 "parser.y"
+#line 8 "parser.y"
 
 void yyerror(const char *);
 
-#line 109 "parser.h"
+#line 127 "parser.h"
 
 #endif /* !YY_YY_PARSER_H_INCLUDED  */

@@ -24,9 +24,17 @@ invalNRO {letra}|{inval}|{nro}
 %%
 var                      		            return PR_VAR;
 salir					                    return PR_SALIR;
-{id}         				                return ID;
+{id}         				                { if(getsym(yytext)){
+                                                    return (getsym(yytext)->type);
+                                                } else {
+                                                    yylval.ID = malloc (sizeof (struct symrec)); 
+                                                    yylval.ID->name = strdup(yytext); 
+                                                    yylval.ID->type = ID;
+                                                    return ID;
+                                                }
+                                            };
 {id}+{inval}+{invalID}*		 	            printf("Error Lexico: ID invalido: %s", yytext);
-{nro}		               		            return NUM;
+{nro}		               		            {sscanf(yytext, "%lf", &yylval.NUM); return NUM;};
 {real}({letra}|{inval})+{invalNRO}*	        printf("Error Lexico: Real invalido: %s", yytext);
 {entero}({letra}|{inval})+{invalNRO}*	    printf("Error Lexico: Constante invalida: %s", yytext);
 {inval}+				                    printf("Error Lexico: Cadena desconocida: %s", yytext);

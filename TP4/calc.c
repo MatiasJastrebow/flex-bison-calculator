@@ -1,24 +1,26 @@
+#include "calc.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "calc.h"
 #include "parser.h"
 
-symrec *putsym (char const *name, int sym_type)
+struct symrec *sym_table;
+
+struct symrec *putsym (char const *name, int sym_type)
 {
-  symrec *res = (symrec *) malloc (sizeof (symrec));
+  struct symrec *res = (struct symrec *) malloc (sizeof (struct symrec));
   res->name = strdup (name);
   res->type = sym_type;
-  res->value.var = 0; /* Set value to 0 even if fun. */
+  res->value.var = 0;
   res->next = sym_table;
   sym_table = res;
   return res;
 }
 
-symrec *getsym (char const *name)
+struct symrec *getsym (char const *name)
 {
-  for (symrec *p = sym_table; p; p = p->next)
+  for (struct symrec *p = sym_table; p; p = p->next)
     if (strcmp(p->name, name) == 0)
       return p;
   return NULL;
@@ -41,53 +43,70 @@ struct init const funs[] =
   { 0, 0 },
 };
 
+struct initNum
+{
+  char const *name;
+  double valor;
+};
+
+struct initNum const nums[] =
+{
+  { "pi", 3.14 },
+  { "e",  2.76  },
+  {0, 0},
+};
+
 void init_table (void)
 {
   for (int i = 0; funs[i].name; i++)
     {
-      symrec *ptr = putsym(funs[i].name, ID);
+      struct symrec *ptr = putsym(funs[i].name, FUN);
       ptr->value.fun = funs[i].fun;
     }
-}
-
-double var_declarada(symrec *id){
-    if(getsym(id->name) != NULL){
-        return id->value.var;
-    }
-    else{
-        yyerror("la variable no fue declarada");
-        return 0;
+  for (int i = 0; nums[i].name; i++)
+    {
+      struct symrec *ptr = putsym(nums[i].name, ID);
+      ptr->value.var = nums[i].valor;
     }
 }
 
-double funcion_existente(symrec *funcion, double const valor){
-    if(getsym(funcion->name) != NULL){
-        return funcion->value.fun(valor);
-    }
-    else{
-        yyerror("El identificador no es una funcion");
-        return 0;
-    }
-}
+// double var_declarada(symrec *id){
+//     if(getsym(id->name == NULL)){
+//       yyerror("la variable no fue declarada");
+//       return 0;
+//     } else {
+//         return id->value.var;
+//     }
+// }
 
-double asignacion(symrec *id, double const valor){
-    if(getsym(id->name) != NULL){
-        id->value.var = valor;
-        return id->value.var;
-    }
-    else{
-        yyerror("la variable no fue declarada");
-        return 0;
-    }
-}
+// double funcion_existente(symrec *funcion, double const valor){
+//     if(getsym(funcion->name) != NULL){
+//         return funcion->value.fun(valor);
+//     }
+//     else{
+//         yyerror("El identificador no es una funcion");
+//         return 0;
+//     }
+// }
 
-double declarar_var(symrec *id){
-    if(getsym(id->name) == NULL){
-        putsym(id->name, ID);
-        return id->value.var;
-    }
-    else{
-        yyerror("la variable ya fue declarada");
-        return 0;
-    }
-}
+// double asignacion(symrec *id, double const valor){
+//     if(getsym(id->name) != NULL){
+//         id->value.var = valor;
+//         return id->value.var;
+//     }
+//     else{
+//         yyerror("la variable no fue declarada");
+//         return 0;
+//     }
+// }
+
+// double declarar_var(symrec *id){
+//     if(getsym(id->name) == NULL){
+//         putsym(id->name, ID);
+//         return id->value.var;
+//     }
+//     else{
+//         yyerror("la variable ya fue declarada");
+//         return 0;
+//     }
+// }

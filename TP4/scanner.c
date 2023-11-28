@@ -884,110 +884,118 @@ return PR_SALIR;
 case 3:
 YY_RULE_SETUP
 #line 27 "scanner.l"
-return ID;
+{ if(getsym(yytext)){
+                                                    return (getsym(yytext)->type);
+                                                } else {
+                                                    yylval.ID = malloc (sizeof (struct symrec)); 
+                                                    yylval.ID->name = strdup(yytext); 
+                                                    yylval.ID->type = ID;
+                                                    return ID;
+                                                }
+                                            };
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "scanner.l"
+#line 36 "scanner.l"
 printf("Error Lexico: ID invalido: %s", yytext);
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 29 "scanner.l"
-return NUM;
+#line 37 "scanner.l"
+{sscanf(yytext, "%lf", &yylval.NUM); return NUM;};
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 30 "scanner.l"
+#line 38 "scanner.l"
 printf("Error Lexico: Real invalido: %s", yytext);
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 31 "scanner.l"
+#line 39 "scanner.l"
 printf("Error Lexico: Constante invalida: %s", yytext);
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 32 "scanner.l"
+#line 40 "scanner.l"
 printf("Error Lexico: Cadena desconocida: %s", yytext);
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 33 "scanner.l"
+#line 41 "scanner.l"
 return MAS;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 34 "scanner.l"
+#line 42 "scanner.l"
 return MAS_IGUAL;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 35 "scanner.l"
+#line 43 "scanner.l"
 return MENOS;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 36 "scanner.l"
+#line 44 "scanner.l"
 return MENOS_IGUAL;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 37 "scanner.l"
+#line 45 "scanner.l"
 return POR;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 38 "scanner.l"
+#line 46 "scanner.l"
 return POR_IGUAL;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 39 "scanner.l"
+#line 47 "scanner.l"
 return DIV;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 40 "scanner.l"
+#line 48 "scanner.l"
 return DIV_IGUAL;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 41 "scanner.l"
+#line 49 "scanner.l"
 return POT;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 42 "scanner.l"
+#line 50 "scanner.l"
 return IGUAL;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 43 "scanner.l"
+#line 51 "scanner.l"
 return PAR_IZQ;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 44 "scanner.l"
+#line 52 "scanner.l"
 return PAR_DER;
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 45 "scanner.l"
+#line 53 "scanner.l"
 return NL;						
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 46 "scanner.l"
+#line 54 "scanner.l"
 ;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 48 "scanner.l"
+#line 56 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 991 "scanner.c"
+#line 999 "scanner.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1963,5 +1971,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 48 "scanner.l"
+#line 56 "scanner.l"
 
