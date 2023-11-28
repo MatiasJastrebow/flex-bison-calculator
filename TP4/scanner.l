@@ -1,6 +1,7 @@
 %{
 #include <stdio.h>
 #include "parser.h"
+#include "calc.h"
 %}
 %option header-file="scanner.h"
 %option outfile="scanner.c"

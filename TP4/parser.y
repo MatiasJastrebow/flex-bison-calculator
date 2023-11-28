@@ -4,18 +4,23 @@
 #include "calc.h"
 }
 
+%union{
+    double val;
+    char caracter;
+    struct symrec *symrec;
+}
+
 %code provides{
 void yyerror(const char *);
 }
 
 %defines "parser.h"
 %output "parser.c"
-%define api.value.type union
-%token <double> NUM
+%token <val> NUM
 %token <symrec*> ID
-%token <char*> PR_VAR PR_SALIR
-%token <char> MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
-%nterm <double> primaria termino expresion linea
+%token <caracter*> PR_VAR PR_SALIR
+%token <caracter> MAS MAS_IGUAL MENOS MENOS_IGUAL POR POR_IGUAL DIV DIV_IGUAL POT IGUAL PAR_IZQ PAR_DER NL
+%type <val> primaria termino expresion linea
 
 %start sesion
 
@@ -45,11 +50,11 @@ linea:
 
 expresion:
     termino
-    | ID IGUAL expresion                {$$ = asignacion($1, $3);}
-    | ID MAS_IGUAL expresion            {$$ = asignacion($1, $1->value.var += $3);}
-    | ID MENOS_IGUAL expresion          {$$ = asignacion($1, $1->value.var -= $3);}
-    | ID POR_IGUAL expresion            {$$ = asignacion($1, $1->value.var *= $3);}
-    | ID DIV_IGUAL expresion            {$$ = asignacion($1, $1->value.var /= $3);}
+    | ID IGUAL expresion                {$$ = $3; asignacion($1, $3);}
+    | ID MAS_IGUAL expresion            {$$ = $3; asignacion($1, $1->value.var + $3);}
+    | ID MENOS_IGUAL expresion          {$$ = $3; asignacion($1, $1->value.var - $3);}
+    | ID POR_IGUAL expresion            {$$ = $3; asignacion($1, $1->value.var * $3);}
+    | ID DIV_IGUAL expresion            {$$ = $3; asignacion($1, $1->value.var / $3);}
     ;
 
 termino:
