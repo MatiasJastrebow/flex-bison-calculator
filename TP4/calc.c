@@ -70,24 +70,14 @@ void init_table (void)
     }
 }
 
-// double var_declarada(symrec *id){
-//     if(getsym(id->name == NULL)){
-//       yyerror("la variable no fue declarada");
-//       return 0;
-//     } else {
-//         return id->value.var;
-//     }
-// }
-
-// double funcion_existente(symrec *funcion, double const valor){
-//     if(getsym(funcion->name) != NULL){
-//         return funcion->value.fun(valor);
-//     }
-//     else{
-//         yyerror("El identificador no es una funcion");
-//         return 0;
-//     }
-// }
+int declarar_var(struct symrec *id){
+    if(getsym(id->name) == NULL){
+      return 1;
+    } else {
+        yyerror("La variable ya esta declarada");
+        return 0;
+    }
+}
 
 // double asignacion(symrec *id, double const valor){
 //     if(getsym(id->name) != NULL){

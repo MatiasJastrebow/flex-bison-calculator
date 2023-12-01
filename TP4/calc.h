@@ -22,8 +22,7 @@ extern struct symrec *sym_table;
 struct symrec *putsym (char const *name, int sym_type);
 struct symrec *getsym (char const *name);
 
-// double var_declarada(symrec *id);
-// double funcion_existente(symrec *funcion, double const valor);
+int declarar_var(struct symrec *id);
 // double asignacion(symrec *id, double valor);
 // double declarar_var(symrec *id);
 
