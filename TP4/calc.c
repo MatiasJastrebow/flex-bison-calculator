@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <stdio.h>
 #include "parser.h"
 
 struct symrec *sym_table;
@@ -74,14 +75,14 @@ int declarar_var(struct symrec *id){
     if(getsym(id->name) == NULL){
       return 1;
     } else {
-        yyerror("La variable ya esta declarada");
+        printf("Error: la variable %s ya fue declarada\n", id->name);
         return 0;
     }
 }
 
 int var_existente(struct symrec *id){
   if(getsym(id->name) == NULL){
-    yyerror("El identificador no fue declarado");
+    printf("Error: el identificador %s no fue declarado\n", id->name);
     return 0;
   }
   else {
