@@ -79,24 +79,12 @@ int declarar_var(struct symrec *id){
     }
 }
 
-// double asignacion(symrec *id, double const valor){
-//     if(getsym(id->name) != NULL){
-//         id->value.var = valor;
-//         return id->value.var;
-//     }
-//     else{
-//         yyerror("la variable no fue declarada");
-//         return 0;
-//     }
-// }
-
-// double declarar_var(symrec *id){
-//     if(getsym(id->name) == NULL){
-//         putsym(id->name, ID);
-//         return id->value.var;
-//     }
-//     else{
-//         yyerror("la variable ya fue declarada");
-//         return 0;
-//     }
-// }
+int var_existente(struct symrec *id){
+  if(getsym(id->name) == NULL){
+    yyerror("El identificador no fue declarado");
+    return 0;
+  }
+  else {
+    return 1;
+  }
+}

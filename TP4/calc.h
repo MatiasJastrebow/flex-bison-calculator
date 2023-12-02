@@ -23,7 +23,6 @@ struct symrec *putsym (char const *name, int sym_type);
 struct symrec *getsym (char const *name);
 
 int declarar_var(struct symrec *id);
-// double asignacion(symrec *id, double valor);
-// double declarar_var(symrec *id);
+int var_existente(struct symrec *id);
 
 #endif

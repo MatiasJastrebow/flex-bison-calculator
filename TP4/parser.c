@@ -1376,43 +1376,43 @@ yyreduce:
     {
   case 3: /* sesion: sesion linea  */
 #line 35 "parser.y"
-                                        {printf("\n");}
+                                        { printf("\n"); }
 #line 1381 "parser.c"
     break;
 
   case 4: /* linea: NL  */
 #line 39 "parser.y"
-                                        {(yyval.linea) = (yyvsp[0].NL);}
+                                        {;}
 #line 1387 "parser.c"
     break;
 
   case 5: /* linea: expresion NL  */
 #line 40 "parser.y"
-                                        {printf("%.10g\n", (yyvsp[-1].expresion));}
+                                        { printf("%.10g\n", (yyvsp[-1].expresion)); }
 #line 1393 "parser.c"
     break;
 
   case 6: /* linea: PR_VAR ID NL  */
 #line 41 "parser.y"
-                                        {if(declarar_var((yyvsp[-1].ID))){(yyvsp[-1].ID) = putsym((yyvsp[-1].ID)->name, ID); printf("%.10g\n", (yyvsp[-1].ID)->value.var);}}
+                                        { if(declarar_var((yyvsp[-1].ID))){(yyvsp[-1].ID) = putsym((yyvsp[-1].ID)->name, ID); printf("%.10g\n", (yyvsp[-1].ID)->value.var);} }
 #line 1399 "parser.c"
     break;
 
   case 7: /* linea: PR_VAR ID IGUAL expresion NL  */
 #line 42 "parser.y"
-                                        {if(declarar_var((yyvsp[-3].ID))){(yyvsp[-3].ID) = putsym((yyvsp[-3].ID)->name, ID); (yyvsp[-3].ID)->value.var = (yyvsp[-1].expresion); printf("%.10g\n", (yyvsp[-1].expresion));}}
+                                        { if(declarar_var((yyvsp[-3].ID))){(yyvsp[-3].ID) = putsym((yyvsp[-3].ID)->name, ID); (yyvsp[-3].ID)->value.var = (yyvsp[-1].expresion); printf("%.10g\n", (yyvsp[-1].expresion));} }
 #line 1405 "parser.c"
     break;
 
   case 8: /* linea: PR_SALIR  */
 #line 43 "parser.y"
-                                        {return 0;}
+                                        { return 0; }
 #line 1411 "parser.c"
     break;
 
   case 9: /* linea: error NL  */
 #line 44 "parser.y"
-                                        {yyerrok;}
+                                        { yyerrok; }
 #line 1417 "parser.c"
     break;
 
@@ -1424,25 +1424,25 @@ yyreduce:
 
   case 12: /* expresion: ID MAS_IGUAL expresion  */
 #line 50 "parser.y"
-                                        { (yyval.expresion) = (yyvsp[0].expresion); (yyvsp[-2].ID)->value.var += (yyvsp[0].expresion); }
+                                        { (yyvsp[-2].ID)->value.var += (yyvsp[0].expresion); (yyval.expresion) = (yyvsp[-2].ID)->value.var; }
 #line 1429 "parser.c"
     break;
 
   case 13: /* expresion: ID MENOS_IGUAL expresion  */
 #line 51 "parser.y"
-                                        { (yyval.expresion) = (yyvsp[0].expresion); (yyvsp[-2].ID)->value.var -= (yyvsp[0].expresion); }
+                                        { (yyvsp[-2].ID)->value.var -= (yyvsp[0].expresion); (yyval.expresion) = (yyvsp[-2].ID)->value.var; }
 #line 1435 "parser.c"
     break;
 
   case 14: /* expresion: ID POR_IGUAL expresion  */
 #line 52 "parser.y"
-                                        { (yyval.expresion) = (yyvsp[0].expresion); (yyvsp[-2].ID)->value.var *= (yyvsp[0].expresion); }
+                                        { (yyvsp[-2].ID)->value.var *= (yyvsp[0].expresion); (yyval.expresion) = (yyvsp[-2].ID)->value.var; }
 #line 1441 "parser.c"
     break;
 
   case 15: /* expresion: ID DIV_IGUAL expresion  */
 #line 53 "parser.y"
-                                        { (yyval.expresion) = (yyvsp[0].expresion); (yyvsp[-2].ID)->value.var /= (yyvsp[0].expresion); }
+                                        { (yyvsp[-2].ID)->value.var /= (yyvsp[0].expresion); (yyval.expresion) = (yyvsp[-2].ID)->value.var; }
 #line 1447 "parser.c"
     break;
 
@@ -1478,31 +1478,31 @@ yyreduce:
 
   case 22: /* primaria: ID  */
 #line 66 "parser.y"
-                                        {(yyval.primaria) = (yyvsp[0].ID)->value.var;}
+                                        { if(var_existente((yyvsp[0].ID))){(yyval.primaria) = (yyvsp[0].ID)->value.var;} }
 #line 1483 "parser.c"
     break;
 
   case 23: /* primaria: NUM  */
 #line 67 "parser.y"
-                                        {(yyval.primaria) = (yyvsp[0].NUM);}
+                                        { (yyval.primaria) = (yyvsp[0].NUM); }
 #line 1489 "parser.c"
     break;
 
   case 24: /* primaria: MENOS primaria  */
 #line 68 "parser.y"
-                                        {(yyval.primaria) = -(yyvsp[0].primaria);}
+                                        { (yyval.primaria) = -(yyvsp[0].primaria); }
 #line 1495 "parser.c"
     break;
 
   case 25: /* primaria: PAR_IZQ expresion PAR_DER  */
 #line 69 "parser.y"
-                                        {(yyval.primaria) = (yyvsp[-1].expresion);}
+                                        { (yyval.primaria) = (yyvsp[-1].expresion); }
 #line 1501 "parser.c"
     break;
 
   case 26: /* primaria: FUN PAR_IZQ expresion PAR_DER  */
 #line 70 "parser.y"
-                                        {(yyval.primaria) = (yyvsp[-3].FUN)->value.fun((yyvsp[-1].expresion));}
+                                        { (yyval.primaria) = (yyvsp[-3].FUN)->value.fun((yyvsp[-1].expresion)); }
 #line 1507 "parser.c"
     break;
 

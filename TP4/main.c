@@ -11,6 +11,6 @@ int main() {
 }
 
 void yyerror(const char *s){
-	printf("línea #%d: %s\n", yylineno, s);
+	printf("%s\n", s);
 	return;
 }
