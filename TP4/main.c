@@ -4,6 +4,8 @@
 #include "calc.h"
 #include "parser.h"
 
+int yysemantics = 0;
+int yylexers = 0;
 
 int main() {
 	init_table();

@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include "parser.h"
 
+char buffer2[200];
+
 struct symrec *sym_table;
 
 struct symrec *putsym (char const *name, int sym_type)
@@ -38,7 +40,7 @@ struct init const funs[] =
   { "atan", atan },
   { "cos",  cos  },
   { "exp",  exp  },
-  { "ln",   log  },
+  { "log",  log  },
   { "sin",  sin  },
   { "sqrt", sqrt },
   { 0, 0 },
@@ -52,8 +54,8 @@ struct initNum
 
 struct initNum const nums[] =
 {
-  { "pi", 3.14 },
-  { "e",  2.76  },
+  { "pi", M_PI },
+  { "e",  M_E },
   {0, 0},
 };
 
@@ -75,14 +77,18 @@ int declarar_var(struct symrec *id){
     if(getsym(id->name) == NULL){
       return 1;
     } else {
-        printf("Error: la variable %s ya fue declarada\n", id->name);
+        yysemantics++;
+        sprintf(buffer2, "Error: la variable %s ya fue declarada", id->name);
+        yyerror(buffer2);
         return 0;
     }
 }
 
 int var_existente(struct symrec *id){
   if(getsym(id->name) == NULL){
-    printf("Error: el identificador %s no fue declarado\n", id->name);
+    yysemantics++;
+    sprintf(buffer2, "Error: el identificador %s no fue declarado", id->name);
+    yyerror(buffer2);
     return 0;
   }
   else {

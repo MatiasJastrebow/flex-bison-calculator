@@ -22,6 +22,8 @@ extern struct symrec *sym_table;
 struct symrec *putsym (char const *name, int sym_type);
 struct symrec *getsym (char const *name);
 
+extern int yysemantics;
+
 int declarar_var(struct symrec *id);
 int var_existente(struct symrec *id);
 

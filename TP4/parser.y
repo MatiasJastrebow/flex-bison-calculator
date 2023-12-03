@@ -7,6 +7,7 @@
 
 %code provides{
 void yyerror(const char *);
+extern int yylexers;
 }
 
 %defines "parser.h"
@@ -30,27 +31,27 @@ void yyerror(const char *);
 %right POT     
 
 %%
-sesion:
+sesion:                                 { if(yynerrs || yylexers || yysemantics) YYABORT; }
     %empty
     | sesion linea                      { printf("\n"); }
     ;
 
 linea:
-    NL                                  {;}
-    | expresion NL                      { printf("%.10g\n", $1); } //falta algun control
-    | PR_VAR ID NL                      { if(declarar_var($2)){$2 = putsym($2->name, ID); printf("%.10g\n", $2->value.var);} }
-    | PR_VAR ID IGUAL expresion NL      { if(declarar_var($2)){$2 = putsym($2->name, ID); $2->value.var = $4; printf("%.10g\n", $4);} }
+    NL                                  
+    | expresion NL                      { printf("%.10g\n", $1); }
+    | PR_VAR ID NL                      { if(declarar_var($2)){$2 = putsym($2->name, ID); printf("%s: %.10g\n", $2->name, $2->value.var);} }
+    | PR_VAR ID IGUAL expresion NL      { if(declarar_var($2)){$2 = putsym($2->name, ID); $2->value.var = $4; printf("%s: %.10g\n", $2->name, $4);} }
     | PR_SALIR                          { return 0; }
-    | error NL                          { yyerrok; }
+    | error NL                          
     ;
 
 expresion:
     termino
-    | ID IGUAL expresion                { $$ = $3; $1->value.var = $3; }
-    | ID MAS_IGUAL expresion            { $1->value.var += $3; $$ = $1->value.var; }
-    | ID MENOS_IGUAL expresion          { $1->value.var -= $3; $$ = $1->value.var; }
-    | ID POR_IGUAL expresion            { $1->value.var *= $3; $$ = $1->value.var; }
-    | ID DIV_IGUAL expresion            { $1->value.var /= $3; $$ = $1->value.var; }
+    | ID IGUAL expresion                { if(var_existente($1)){$1->value.var = $3; $$ = $3;} else {YYERROR;} }
+    | ID MAS_IGUAL expresion            { if(var_existente($1)){$1->value.var += $3; $$ = $1->value.var;} else {YYERROR;} }
+    | ID MENOS_IGUAL expresion          { if(var_existente($1)){$1->value.var -= $3; $$ = $1->value.var;} else {YYERROR;} }
+    | ID POR_IGUAL expresion            { if(var_existente($1)){$1->value.var *= $3; $$ = $1->value.var;} else {YYERROR;} } 
+    | ID DIV_IGUAL expresion            { if(var_existente($1)){$1->value.var /= $3; $$ = $1->value.var;} else {YYERROR;} }
     ;
 
 termino:
@@ -63,7 +64,7 @@ termino:
     ;
 
 primaria:
-    ID                                  { if(var_existente($1)){$$ = $1->value.var;} } //falta controlar porq cuando no esta declarado, muestra basura
+    ID                                  { if(var_existente($1)){$$ = $1->value.var;} else {YYERROR;} }
     | NUM                               { $$ = $1; }
     | MENOS primaria %prec NEG          { $$ = -$2; }
     | PAR_IZQ expresion PAR_DER         { $$ = $2; }

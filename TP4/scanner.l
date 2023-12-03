@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include "parser.h"
 #include "calc.h"
+char buffer[200];
 %}
 %option header-file="scanner.h"
 %option outfile="scanner.c"
@@ -32,12 +33,12 @@ salir					                    return PR_SALIR;
                                                     yylval.ID->type = ID;
                                                     return ID;
                                                 }
-                                            };
-{id}+{inval}+{invalID}*		 	            printf("Error Lexico: ID invalido: %s", yytext);
-{nro}		               		            {sscanf(yytext, "%lf", &yylval.NUM); return NUM;};
-{real}({letra}|{inval})+{invalNRO}*	        printf("Error Lexico: Real invalido: %s", yytext);
-{entero}({letra}|{inval})+{invalNRO}*	    printf("Error Lexico: Constante invalida: %s", yytext);
-{inval}+				                    printf("Error Lexico: Cadena desconocida: %s", yytext);
+                                            }
+{id}+{inval}+{invalID}*		 	            {yylexers++; sprintf(buffer, "Error Lexico: ID invalido: %s", yytext); yyerror(buffer);}
+{nro}		               		            {sscanf(yytext, "%lf", &yylval.NUM); return NUM;}
+{real}({letra}|{inval})+{invalNRO}*	        {yylexers++; sprintf(buffer, "Error Lexico: Real invalido: %s", yytext); yyerror(buffer);}
+{entero}({letra}|{inval})+{invalNRO}*	    {yylexers++; sprintf(buffer, "Error Lexico: Constante invalida: %s", yytext); yyerror(buffer);}
+{inval}+				                    {yylexers++; sprintf(buffer, "Error Lexico: Cadena desconocida: %s", yytext); yyerror(buffer);}
 \+					                        return MAS;
 \+=					                        return MAS_IGUAL;
 -					                        return MENOS;
