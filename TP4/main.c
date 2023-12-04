@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "scanner.h"
-#include "calc.h"
 #include "parser.h"
+#include "calc.h"
 
 int yysemantics = 0;
 int yylexers = 0;
