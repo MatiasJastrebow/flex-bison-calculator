@@ -38,9 +38,9 @@ sesion:                                 { if(yynerrs || yylexers || yysemantics)
 
 linea:
     NL                                  
-    | expresion NL                      { printf("%.10g\n", $1); }
-    | PR_VAR ID NL                      { if(declarar_var($2)){$2 = putsym($2->name, ID); printf("%s: %.10g\n", $2->name, $2->value.var);} }
-    | PR_VAR ID IGUAL expresion NL      { if(declarar_var($2)){$2 = putsym($2->name, ID); $2->value.var = $4; printf("%s: %.10g\n", $2->name, $4);} }
+    | expresion NL                      { printf("%.2f\n", $1); }
+    | PR_VAR ID NL                      { if(declarar_var($2)){$2 = putsym($2->name, ID); printf("%s: %.2f\n", $2->name, $2->value.var);} }
+    | PR_VAR ID IGUAL expresion NL      { if(declarar_var($2)){$2 = putsym($2->name, ID); $2->value.var = $4; printf("%s: %.2f\n", $2->name, $4);} }
     | PR_SALIR                          { return 0; }
     | error NL                          
     ;

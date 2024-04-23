@@ -37,11 +37,14 @@ struct init
 
 struct init const funs[] =
 {
+  { "sin",  sin },
+  { "cos",  cos },
+  { "tan",  tan },
+  { "asin", asin },
+  { "acos", acos },
   { "atan", atan },
-  { "cos",  cos  },
-  { "exp",  exp  },
-  { "ln",  log  },
-  { "sin",  sin  },
+  { "exp",  exp },
+  { "ln",   log  },
   { "sqrt", sqrt },
   { 0, 0 },
 };
