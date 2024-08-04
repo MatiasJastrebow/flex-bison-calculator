@@ -1,14 +1,16 @@
 # Calculadora utilizando Flex y Bison
-La calculadora permite crear variables y ejecutar funciones basicas.
-Para salir de la calculadora escribir *exit*
+La calculadora permite crear variables y ejecutar funciones básicas.
+Para salir de la calculadora escribir *exit*.
 
-## Como correr la calculadora
+## Para probar
 ```
-$ make
-$ ./calc
+git clone https://github.com/santymendez/flex-bison-calculator.git
+cd flex-bison-calculator
+make
+./calc
 ```
 
-## Funcionalidades Basicas
+## Funcionalidades Básicas
 
 ### Operaciones 
 ```
@@ -19,7 +21,7 @@ $ ./calc
 ^
 ```
 
-### Crear variables
+### Creación de variables
 ```
 var <name>
 var <name> = <value>
